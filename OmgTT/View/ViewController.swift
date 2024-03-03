@@ -39,8 +39,6 @@ final class ViewController: UIViewController {
         }
     }
     
-   
-    
     private func setupUI() {
         view.backgroundColor = .black
         
@@ -59,7 +57,6 @@ final class ViewController: UIViewController {
             make.edges.equalToSuperview()
         }
     }
-    
 }
 
 extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
