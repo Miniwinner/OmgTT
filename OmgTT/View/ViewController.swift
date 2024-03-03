@@ -8,8 +8,11 @@ import SnapKit
 import UIKit
 
 final class ViewController: UIViewController {
-    private let vm = ViewModel(numberOfSections: 10)
-    
+    private lazy var random: Int = {
+           Int.random(in: 100...200)
+       }()
+    private lazy var vm = ViewModel(numberOfSections: self.random)
+       
     lazy var mainCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -25,6 +28,7 @@ final class ViewController: UIViewController {
         setupUI()
         setupLayout()
         reloadNums()
+        
     }
     
     private func reloadNums() {
@@ -34,6 +38,8 @@ final class ViewController: UIViewController {
             self.reloadNums()
         }
     }
+    
+   
     
     private func setupUI() {
         view.backgroundColor = .black
@@ -58,7 +64,7 @@ final class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 10
+        return random
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
