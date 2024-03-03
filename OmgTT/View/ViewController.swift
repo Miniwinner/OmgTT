@@ -12,7 +12,7 @@ final class ViewController: UIViewController {
            Int.random(in: 100...200)
        }()
     private lazy var vm = ViewModel(numberOfSections: self.random)
-       
+    private var index: IndexPath?
     lazy var mainCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -29,14 +29,6 @@ final class ViewController: UIViewController {
         setupLayout()
         reloadNums()
         
-    }
-    
-    private func reloadNums() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.vm.reloadRandomNumber()
-            self.mainCollection.reloadData()
-            self.reloadNums()
-        }
     }
     
     private func setupUI() {
@@ -57,6 +49,26 @@ final class ViewController: UIViewController {
             make.edges.equalToSuperview()
         }
     }
+    
+    private func reloadNums() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.vm.reloadRandomNumber()
+            if self.index == nil {
+                self.mainCollection.reloadData()}
+            else {
+                self.reloadIndex()
+            }
+            self.reloadIndex()
+            self.reloadNums()
+        }
+    }
+   
+    private func reloadIndex() {
+        var indexReload = mainCollection.indexPathsForVisibleItems
+        indexReload.removeAll(where: { $0 == index})
+        mainCollection.reloadItems(at: indexReload)
+    }
+    
 }
 
 extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -71,6 +83,13 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = mainCollection.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! Cell
         cell.setupData(num: vm.item(for: indexPath))
+        cell.callBack = { [weak self] in
+            guard let self = self else { return }
+            index = indexPath
+        }
+        cell.callBackSwitch = { [weak self] in
+            self?.index = nil
+        }
         return cell
     }
 }

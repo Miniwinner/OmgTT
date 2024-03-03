@@ -9,16 +9,9 @@ import UIKit
 import SnapKit
 
 final class Cell: UICollectionViewCell {
-    private var isEnlarged: Bool = false {
-        didSet {
-            if isEnlarged {
-                enlargeCell()
-            } else {
-                resetCellSize()
-            }
-        }
-    }
     
+    var callBack: (() -> Void)?
+    var callBackSwitch: (() -> Void)?
     lazy var labelNum: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -27,17 +20,9 @@ final class Cell: UICollectionViewCell {
         label.backgroundColor = .clear
         return label
     }()
-    
-    lazy var buttonTap: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(toggleSize), for: .touchDown)
-        button.backgroundColor = .clear
-        
-        return button
-    }()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupLongPressGesture()
         setupUI()
         setupLayout()
     }
@@ -50,9 +35,6 @@ final class Cell: UICollectionViewCell {
         labelNum.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-        buttonTap.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
     }
     
     private func setupUI() {
@@ -60,30 +42,35 @@ final class Cell: UICollectionViewCell {
         layer.borderColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
         layer.borderWidth = 1
         addSubview(labelNum)
-        addSubview(buttonTap)
     }
+    
     func setupData(num: Int) {
         labelNum.text = "\(num)"
         setCorner(corner: num)
     }
+    
     private func setCorner(corner: Int) {
         self.layer.cornerRadius = CGFloat(corner)
     }
-    @objc func toggleSize() {
-        isEnlarged.toggle()
-    }
     
-    private func enlargeCell() {
-        print("tap")
-        UIView.animate(withDuration: 0.2) {
-            self.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-        }
+    private func setupLongPressGesture() {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        self.addGestureRecognizer(longPressGesture)
     }
-    
-    private func resetCellSize() {
-        print("rel")
-        UIView.animate(withDuration: 0.2) {
-            self.transform = CGAffineTransform.identity
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        switch gestureRecognizer.state {
+        case .began:
+            self.callBack?()
+            UIView.animate(withDuration: 0.2) {
+                self.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+            }
+        case .ended, .cancelled:
+            callBackSwitch?()
+            UIView.animate(withDuration: 0.2) {
+                self.transform = CGAffineTransform.identity
+            }
+        default:
+            break
         }
     }
     
