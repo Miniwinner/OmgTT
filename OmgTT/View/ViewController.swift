@@ -9,7 +9,7 @@ import UIKit
 
 final class ViewController: UIViewController {
     private lazy var random: Int = {
-           Int.random(in: 100...200)
+           Int.random(in: 101...200)
        }()
     private lazy var vm = ViewModel(numberOfSections: self.random)
     private var index: IndexPath?

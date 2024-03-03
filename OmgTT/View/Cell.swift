@@ -39,7 +39,7 @@ final class Cell: UICollectionViewCell {
     
     private func setupUI() {
         backgroundColor = .white
-        layer.borderColor = CGColor(red: 0, green: 0, blue: 0, alpha: 1)
+        layer.borderColor = UIColor.black.cgColor
         layer.borderWidth = 1
         addSubview(labelNum)
     }

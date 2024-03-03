@@ -19,7 +19,7 @@ final class ViewModel: ViewModelProtocol {
         sectionData = (0..<numberOfSections).map { _ in
             let count = Int.random(in: 11...20)
             return (0..<count).map { _ in
-                return Int.random(in: 16...30)
+                return Int.random(in: 10...30)
             }
         }
     }
